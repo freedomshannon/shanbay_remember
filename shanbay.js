@@ -7,6 +7,10 @@ const { Configuration, OpenAIApi } = require("openai");
 const { exit } = require("process");
 import API from "./api.js";
 
+// *** 1. 从环境变量或配置文件中获取自建 API 的地址和密钥 ***
+const yourApiKey = process.env.YOUR_API_KEY || 'sk-CU3Bs2ZS1Tg76BSP2f82D20272314a3bB5E78373F77101Ef'; // 替换为你的实际密钥
+const yourApiBase = process.env.YOUR_API_BASE || 'https://api.huida.app/v1'; // 替换为你的实际地址
+
 const args = process.argv.slice(2);
 
 if (args.length < 3) {
@@ -20,14 +24,19 @@ const cookie = args[2];
 const api = new API(cookie);
 
 
+// *** 2. 修改 configuration 对象 ***
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: yourApiKey, // 使用你的自建 API 密钥
+  basePath: yourApiBase, // 使用你的自建 API 基础地址
 });
 const openai = new OpenAIApi(configuration);
 
+// *** 3.  根据需要修改 chapGPT 函数 ***
+//     - 如果你的自建 API 使用了不同的模型名称或参数，
+//       你需要相应地修改此函数。 
 async function chapGPT(words) {
   const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
+    model: "gemini-1.5-pro-latest", //  模型名称，可能需要修改
     // copy from https://github.com/piglei/ai-vocabulary-builder
     messages: [
       {
